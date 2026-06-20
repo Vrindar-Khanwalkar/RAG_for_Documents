@@ -1,5 +1,6 @@
 import gradio as gr
 import os
+from src.ingest import load_documents
 MAX_FILE_SIZE_MB = 25
 MAX_FILES = 5
 
@@ -11,7 +12,6 @@ def ingest(files):
     if not files:
         return "No files selected"
 
-    # Validate file sizes
     for file in files:
 
         size_mb = os.path.getsize(file.name) / (1024 * 1024)
@@ -19,16 +19,27 @@ def ingest(files):
         if size_mb > MAX_FILE_SIZE_MB:
             return f"{os.path.basename(file.name)} exceeds {MAX_FILE_SIZE_MB} MB limit"
 
-    # Placeholder for future ingestion logic
-    file_names = [
-        os.path.basename(file.name)
-        for file in files
-    ]
+    result = load_documents(files)
 
-    return (
-        "Documents ready:\n\n"
-        + "\n".join(file_names)
-    )
+    response = []
+
+    response.append("Loaded Documents:\n")
+
+    for doc in result["loaded_documents"]:
+
+        response.append(
+            f"✓ {doc['filename']} ({doc['character_count']} chars)"
+        )
+
+    response.append("\nFailed Documents:\n")
+
+    for doc in result["failed_documents"]:
+
+        response.append(
+            f"✗ {doc['filename']} - {doc['reason']}"
+        )
+
+    return "\n".join(response)
 
 
 def ask_question(question):
