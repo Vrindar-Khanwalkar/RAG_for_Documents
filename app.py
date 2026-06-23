@@ -1,6 +1,7 @@
 import gradio as gr
 import os
 from src.ingest import load_documents
+from src.chunking import chunk_documents
 MAX_FILE_SIZE_MB = 25
 MAX_FILES = 5
 
@@ -20,20 +21,32 @@ def ingest(files):
             return f"{os.path.basename(file.name)} exceeds {MAX_FILE_SIZE_MB} MB limit"
 
     result = load_documents(files)
+    loaded_documents = result["loaded_documents"]
+    failed_documents = result["failed_documents"]
 
+    all_chunks = chunk_documents(loaded_documents)
     response = []
 
-    response.append("Loaded Documents:\n")
+    response.append(
+    f"Documents Loaded: {len(loaded_documents)}")
 
-    for doc in result["loaded_documents"]:
+    response.append(
+    f"Chunks Created: {len(all_chunks)}")
+    response.append("\nLoaded Documents:\n")
+    response.append("")
+    for doc in loaded_documents:
+        doc_chunks = len(
+        chunk_documents([doc]))
 
         response.append(
-            f"✓ {doc['filename']} ({doc['character_count']} chars)"
+            f"✓ {doc['filename']} "
+            f"({doc['character_count']} chars, "
+            f"{doc_chunks} chunks)"
         )
 
     response.append("\nFailed Documents:\n")
 
-    for doc in result["failed_documents"]:
+    for doc in failed_documents:
 
         response.append(
             f"✗ {doc['filename']} - {doc['reason']}"
