@@ -4,6 +4,8 @@ import os
 from src.ingest import load_documents
 from src.chunking import chunk_documents
 from src.embeddings import embed_chunks
+from src.vector_store import add_chunks, count
+from src.retrieval import retrieve_top_chunks
 
 MAX_FILE_SIZE_MB = 25
 MAX_FILES = 5
@@ -36,14 +38,17 @@ def ingest(files):
         return "No valid documents loaded"
 
     all_chunks = chunk_documents(loaded_documents)
+    
 
     if not all_chunks:
         return "Chunking failed"
-
     embedded_chunks = embed_chunks(all_chunks)
 
+    
     if not embedded_chunks:
         return "Embedding generation failed"
+    
+    add_chunks(embedded_chunks)
 
     if len(embedded_chunks[0]["embedding"]) != 384:
         return (
@@ -73,9 +78,8 @@ def ingest(files):
         f"Chunks Created: {len(all_chunks)}"
     )
 
-    response.append(
-        f"Embeddings Generated: {len(embedded_chunks)}"
-    )
+    response.append(f"Embeddings Generated: {len(embedded_chunks)}")
+    response.append(f"Vectors Stored: {count()}")
 
     response.append(
         f"Embedding Dimensions: "
@@ -109,7 +113,41 @@ def ingest(files):
 
 
 def ask_question(question):
-    return f"Placeholder answer for: {question}"
+
+    if not question.strip():
+        return "Please enter a question."
+    print(f"Vectors in store: {count()}")
+    retrieved_chunks = retrieve_top_chunks(
+        question,
+        top_k=3
+    )
+
+    if not retrieved_chunks:
+        return "No relevant chunks found."
+
+    response = []
+
+    response.append("Top Retrieved Chunks:\n")
+
+    for score, chunk in retrieved_chunks:
+
+        response.append(
+            f"Similarity: {score:.4f}"
+        )
+
+        response.append(
+            f"Source: {chunk['filename']}"
+        )
+
+        response.append(
+            f"Chunk: {chunk['chunk_index']}"
+        )
+
+        response.append(chunk["chunk_text"])
+
+        response.append("\n" + "-" * 60 + "\n")
+
+    return "\n".join(response)
 
 
 with gr.Blocks(title="Document RAG Assistant") as demo:
@@ -157,4 +195,4 @@ with gr.Blocks(title="Document RAG Assistant") as demo:
             outputs=answer
         )
 
-demo.launch()
+demo.launch(debug=True)

@@ -1,188 +1,126 @@
 # 📚 Document RAG Assistant
 
-A Retrieval-Augmented Generation (RAG) application that ingests documents, performs token-based chunking, generates embeddings, and enables semantic retrieval over uploaded content.
+A Retrieval-Augmented Generation (RAG) application built completely from scratch in Python.
 
-## Features
+The purpose of this project is to understand every stage of a RAG pipeline before using higher-level frameworks such as LangChain, LlamaIndex or vector databases.
 
-### Document Ingestion
+---
 
-* TXT document support
-* PDF document support
-* DOCX document support
-* File validation and size checks
-* Unified document schema
+## Current Features
 
-### Intelligent Chunking
+### ✅ Document Ingestion
+- Upload multiple PDF/TXT documents
+- File validation
+- Size limits
+- Error handling
 
-* Token-based chunking using Hugging Face tokenizers
-* Configurable chunk size and overlap
-* Metadata tracking for each chunk
-* Multi-document processing
+### ✅ Chunking
+- Token-based chunking
+- Configurable chunk size
+- Configurable overlap
+- Metadata generation
+- Document tracking
 
-### User Interface
+### ✅ Embeddings
+- SentenceTransformers
+- all-MiniLM-L6-v2
+- Batch embedding generation
+- 384-dimensional vectors
 
-* Built with Gradio
-* Multi-file upload support
-* Document ingestion dashboard
-* Future conversational chat interface
+### ✅ Vector Store
+- In-memory vector storage
+- Add vectors
+- Retrieve vectors
+- Clear vector store
+- Count stored vectors
+
+### ✅ Semantic Retrieval
+- Query embedding generation
+- Cosine similarity (implemented from scratch)
+- Search across all stored vectors
+- Rank by similarity
+- Return Top-K most relevant chunks
+
+---
+
+## Tech Stack
+
+- Python
+- Gradio
+- SentenceTransformers
+- HuggingFace
+- PyPDF
+- NumPy (indirectly through SentenceTransformers)
+
+---
+
+## Current Pipeline
+
+Upload Documents
+↓
+Load Documents
+↓
+Chunk Documents
+↓
+Generate Embeddings
+↓
+Store in Vector Store
+↓
+User Question
+↓
+Generate Query Embedding
+↓
+Cosine Similarity Search
+↓
+Sort by Similarity
+↓
+Return Top-K Chunks
 
 ---
 
 ## Project Structure
 
-```text
-RAG_Document/
+```
+project/
 │
 ├── app.py
-├── requirements.txt
-├── README.md
 │
-├── src/
-│   ├── ingest.py
-│   ├── chunking.py
-│   └── embeddings.py
-│
-└── data/
+└── src/
+    ├── ingest.py
+    ├── chunking.py
+    ├── embeddings.py
+    ├── retrieval.py
+    └── vector_store.py
 ```
 
 ---
 
-## Document Schema
+## Current Status
 
-```python
-{
-    "document_id": "...",
-    "filename": "...",
-    "content": "...",
-    "file_type": "...",
-    "character_count": 0,
-    "metadata": {}
-}
-```
+✅ Document Loading
 
----
+✅ Chunking
 
-## Chunk Schema
+✅ Embeddings
 
-```python
-{
-    "chunk_id": "...",
-    "document_id": "...",
-    "filename": "...",
-    "chunk_index": 0,
-    "chunk_text": "...",
-    "metadata": {
-        "source_type": ".pdf",
-        "chunk_size": 1000,
-        "chunk_overlap": 200,
-        "token_count": 1000
-    }
-}
-```
+✅ In-memory Vector Store
+
+✅ Semantic Retrieval
+
+⬜ LLM Generation
+
+⬜ Prompt Engineering
+
+⬜ Conversation Memory
+
+⬜ Persistent Vector Database (ChromaDB / FAISS)
 
 ---
 
-## Chunking Strategy
+## Next Steps
 
-Current configuration:
-
-```python
-CHUNK_SIZE = 1000
-CHUNK_OVERLAP = 200
-```
-
-Sliding window approach:
-
-```text
-Chunk 1: 0-1000
-Chunk 2: 800-1800
-Chunk 3: 1600-2600
-...
-```
-
-This preserves contextual continuity across chunk boundaries while maintaining retrieval quality.
-
----
-
-## Technology Stack
-
-* Python
-* Gradio
-* Hugging Face Transformers
-* PyPDF
-* python-docx
-* Sentence Transformers
-
----
-
-## Current Progress
-
-### Completed
-
-* [x] Gradio Interface
-* [x] Multi-file Upload
-* [x] TXT Loader
-* [x] PDF Loader
-* [x] DOCX Loader
-* [x] Document Metadata Extraction
-* [x] Token Counting
-* [x] Token-Based Chunking
-* [x] Overlapping Chunks
-* [x] Chunk Metadata Generation
-* [x] Multi-Document Chunk Processing
-* [x] Embedding Model Initialization
-
-### In Progress
-
-* [ ] Embedding Generation
-* [ ] Vector Database Integration
-* [ ] Semantic Retrieval
-* [ ] Retrieval Ranking
-* [ ] Answer Generation
-* [ ] Conversational Memory
-* [ ] Evaluation Pipeline
-
----
-
-## Installation
-
-```bash
-git clone <repository-url>
-
-cd RAG_Document
-
-python -m venv .venv
-
-source .venv/bin/activate
-# Windows:
-# .venv\Scripts\activate
-
-pip install -r requirements.txt
-```
-
----
-
-## Run Application
-
-```bash
-python app.py
-```
-
-The application launches locally using Gradio.
-
----
-
-## Future Roadmap
-
-1. Generate embeddings for document chunks
-2. Store vectors in a vector database
-3. Implement semantic similarity search
-4. Build retrieval pipeline
-5. Integrate LLM response generation
-6. Add evaluation and monitoring metrics
-
----
-
-## Author
-
-Built as a hands-on implementation of Retrieval-Augmented Generation (RAG) systems to explore document ingestion, chunking strategies, semantic search, and LLM-powered question answering.
+- Connect an LLM
+- Build prompt template
+- Generate answers using retrieved context
+- Add citations
+- Replace in-memory vector store with ChromaDB
