@@ -1,8 +1,8 @@
 from transformers import AutoTokenizer
 
 
-CHUNK_SIZE = 1000
-CHUNK_OVERLAP = 200
+CHUNK_SIZE = 300
+CHUNK_OVERLAP = 75
 tokenizer = AutoTokenizer.from_pretrained(
     "sentence-transformers/all-MiniLM-L6-v2")
 def count_tokens(text):
@@ -40,7 +40,7 @@ def chunk_document(document):
             "metadata":{"source_type": document["file_type"],
                             "chunk_size": CHUNK_SIZE,
                             "chunk_overlap": CHUNK_OVERLAP,
-                            "token_count": len(tokens)}
+                            "token_count": len(chunk_tokens)}
             }
 
         chunks.append(chunk)

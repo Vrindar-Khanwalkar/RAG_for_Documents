@@ -5,7 +5,8 @@ from src.ingest import load_documents
 from src.chunking import chunk_documents
 from src.embeddings import embed_chunks
 from src.vector_store import add_chunks, count
-from src.retrieval import retrieve_top_chunks
+from src.vector_store import clear_store
+from src.llm import generate_answer
 
 MAX_FILE_SIZE_MB = 25
 MAX_FILES = 5
@@ -47,7 +48,7 @@ def ingest(files):
     
     if not embedded_chunks:
         return "Embedding generation failed"
-    
+    clear_store()
     add_chunks(embedded_chunks)
 
     if len(embedded_chunks[0]["embedding"]) != 384:
@@ -116,39 +117,10 @@ def ask_question(question):
 
     if not question.strip():
         return "Please enter a question."
-    print(f"Vectors in store: {count()}")
-    retrieved_chunks = retrieve_top_chunks(
-        question,
-        top_k=3
-    )
 
-    if not retrieved_chunks:
-        return "No relevant chunks found."
+    answer = generate_answer(question)
 
-    response = []
-
-    response.append("Top Retrieved Chunks:\n")
-
-    for score, chunk in retrieved_chunks:
-
-        response.append(
-            f"Similarity: {score:.4f}"
-        )
-
-        response.append(
-            f"Source: {chunk['filename']}"
-        )
-
-        response.append(
-            f"Chunk: {chunk['chunk_index']}"
-        )
-
-        response.append(chunk["chunk_text"])
-
-        response.append("\n" + "-" * 60 + "\n")
-
-    return "\n".join(response)
-
+    return answer
 
 with gr.Blocks(title="Document RAG Assistant") as demo:
 

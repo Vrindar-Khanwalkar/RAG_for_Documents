@@ -46,7 +46,7 @@ def search_similar_chunks(query_embedding):
     return similarities
 
 
-def retrieve_top_chunks(query, top_k=3):
+def retrieve_top_chunks(query, top_k=5):
     print(f"Query: {query}")
     query_embedding = generate_query_embedding(query)
     similar_chunks = search_similar_chunks(query_embedding)
@@ -56,5 +56,8 @@ def retrieve_top_chunks(query, top_k=3):
         key=itemgetter(0),
         reverse=True
     )
+    top_chunks = sorted_chunks[:top_k]
+    for score, chunk in sorted_chunks[:top_k]:
+        print(score, chunk["chunk_index"])
 
-    return sorted_chunks[:top_k]
+    return [chunk for score, chunk in top_chunks]
