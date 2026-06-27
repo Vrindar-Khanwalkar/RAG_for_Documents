@@ -77,6 +77,118 @@ Unlike many RAG tutorials that rely heavily on high-level frameworks, this proje
 | Tokenization      | HuggingFace Transformers               |
 
 ---
+## Installation & Usage
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/<your-username>/RAG_Document.git
+cd RAG_Document
+```
+
+---
+
+### 2. Create a Virtual Environment
+
+**Windows**
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+```
+
+**Linux / macOS**
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+---
+
+### 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+### 4. Install Ollama
+
+Download and install Ollama from:
+
+https://ollama.com/download
+
+---
+
+### 5. Download the Phi-3 Model
+
+```bash
+ollama pull phi3
+```
+
+Verify the installation:
+
+```bash
+ollama list
+```
+
+Expected output:
+
+```text
+NAME
+phi3:latest
+```
+
+---
+
+### 6. Start the Ollama Server
+
+Normally, Ollama starts automatically after installation.
+
+If needed, start it manually:
+
+```bash
+ollama serve
+```
+
+---
+
+### 7. Run the Application
+
+```bash
+python app.py
+```
+
+Gradio will launch and display a local URL similar to:
+
+```text
+Running on local URL: http://127.0.0.1:7860
+```
+
+Open the URL in your browser.
+
+---
+
+## Using the Application
+
+1. Open the **Upload Documents** tab.
+2. Upload one or more PDF, DOCX, or TXT files.
+3. Click **Ingest Documents**.
+4. Wait for embeddings to be generated.
+5. Switch to the **Chat** tab.
+6. Ask questions about the uploaded documents.
+7. The application retrieves the most relevant chunks and generates an answer using the local Phi-3 model.
+
+---
+
+## Requirements
+
+* Python 3.10+
+* Ollama
+* Phi-3 Model
+* Internet connection (only required for the initial model download)
 
 ## Project Structure
 
@@ -184,6 +296,14 @@ Generate Answer
 * Optimized for learning rather than production deployment
 
 ---
+
+## Known Issues
+
+* Retrieval quality depends on chunk size and Top-K configuration.
+* Large Ollama context sizes may require significant RAM and can cause out-of-memory errors.
+* The vector store is currently in-memory and is cleared whenever new documents are ingested.
+* This project is intended as a learning implementation of RAG rather than a production deployment.
+
 
 ## Future Improvements
 
