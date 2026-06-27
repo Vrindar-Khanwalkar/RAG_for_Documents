@@ -31,7 +31,6 @@ QUESTION
 ANSWER
 ======================
     """
-    print(context)
     return prompt
 
 
@@ -41,7 +40,8 @@ def ask_llm(prompt):
     """
     # Placeholder for LLM interaction
     # In a real implementation, this would call the LLM API
-    response = chat(model="phi3", messages=[{"role": "system", "content": "You are a helpful AI assistant."}, {"role": "user", "content": prompt}],  options={"temperature": 0,"num_predict": 128,})
+    response = chat(model="phi3", messages=[{"role": "system", "content": "You are a helpful AI assistant."}, {"role": "user", "content": prompt}],  
+                    options={"temperature": 0,"num_ctx" : 2048,"num_predict": 128,})
     return response["message"]["content"]
 
 def generate_answer(question):

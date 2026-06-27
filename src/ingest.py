@@ -1,8 +1,6 @@
 from pathlib import Path
-from unittest import loader
-import uuid, datetime
+import uuid
 from pypdf import PdfReader
-from gradio_client import file
 from docx import Document
 
 
@@ -12,9 +10,6 @@ def read_text_file(file_path):
         return f.read()
 
 def load_txt(file_path: str) -> dict:
-
-    print(file_path)
-    print(type(file_path))
     content = read_text_file(file_path)
     return {
         "document_id": f"{Path(file_path).stem}_{uuid.uuid4().hex[:8]}",
@@ -22,7 +17,9 @@ def load_txt(file_path: str) -> dict:
         "content": content,
         "file_type": Path(file_path).suffix.lower(),
         "character_count": len(content),
-        "metadata":{}
+        "metadata":{
+            "encoding": "utf-8"
+        }
     }
 
 def load_pdf_file(file_path):
@@ -88,10 +85,7 @@ def load_documents(files):
         try:
 
             loader = LOADERS[extension]
-            print(extension)
-            print(loader)
             document = loader(file.name)
-            print(document)
             loaded_documents.append(document)
 
         except Exception as e:

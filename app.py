@@ -39,13 +39,10 @@ def ingest(files):
         return "No valid documents loaded"
 
     all_chunks = chunk_documents(loaded_documents)
-    
-
     if not all_chunks:
         return "Chunking failed"
-    embedded_chunks = embed_chunks(all_chunks)
-
     
+    embedded_chunks = embed_chunks(all_chunks)
     if not embedded_chunks:
         return "Embedding generation failed"
     clear_store()
